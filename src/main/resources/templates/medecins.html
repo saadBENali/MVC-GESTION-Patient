@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template}"
+      xmlns:sec="www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Medecin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content1">
+
+    <div class="container mt-2">
+        <div class="card"/>
+        <div class="card-header"> Liste des Medecins </div>
+        <div class="card-body text-center" >
+               <form method="get" th:action="@{/user/medecins}">
+                   <label>Key word</label>
+                   <input type="text" name="keyword" th:value="${keyword}">
+                   <button type="submit" class="btn btn-primary">Chercher</button>
+                   <button type="button" class="btn btn-outline-success pull-right" sec:authorize="hasAuthority('ADMIN')">
+                       <a th:href="@{/admin/formMedecin}">Ajouter Medecin</a> </button>
+               </form>
+        </div>
+        <table  class="table table-bordered">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Specialite</th>
+                <th sec:authorize="hasRole('ADMIN')">Action</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p:${listMedecins}">
+
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.nom}"></td>
+                <td th:text="${p.email}"></td>
+                <td th:text="${p.specialite}"></td>
+                                <td sec:authorize="hasAuthority('ADMIN')">
+                                    <a onclick="return confirm('Etes vous sur ? ')" class="btn btn-danger" th:href="@{/admin/deleteMedecin(id=${p.id},keyword=${keyword} ,page=${currentPage})}">
+                                        Supprimer
+                                    </a>
+                                </td>
+                                <td sec:authorize="hasAuthority('ADMIN')">
+                                    <a  class="btn btn-success"  th:href="@{/admin/editMedecin(id=${p.id},keyword=${keyword},page=${currentPage})}">
+                                        Modifier
+                                    </a>
+                                </td>
+
+
+            </tr>
+
+            </tbody>
+        </table>
+        <ul class="nav nav-pills">
+                  <li th:each="page,status:${pages}">
+                      <a th:class="${status.index == currentPage ?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}"
+                         th:text="${status.index }"
+                         th:href="@{/user/medecins(page=${status.index},keyword=${keyword})}"></a>
+                  </li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+
+
+</body>
+</html>
